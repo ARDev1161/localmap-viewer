@@ -17,10 +17,18 @@ struct Buffer{
     QVector<GLfloat> vertex;
     long counter = 0;
 
-    QOpenGLVertexArrayObject vao;
     QOpenGLBuffer vbo;
+    QOpenGLVertexArrayObject vao;
+    QOpenGLVertexArrayObject::Binder *vaoBinder;
 
-    void initVbo(){
+    ~Buffer(){
+        delete vaoBinder;
+    }
+
+    void init(){
+        vao.create();
+        vaoBinder = new QOpenGLVertexArrayObject::Binder(&vao);
+
         vbo.create();
         vbo.bind();
         vbo.allocate( vertex.constData(), counter * sizeof(GLfloat));
@@ -83,6 +91,7 @@ public:
     QSize sizeHint() const override;
 
     int draw(GLenum mode, QVector<QVector3D> &data);
+
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -91,13 +100,17 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
 
-public slots:
+public Q_SLOTS:
     void setXRotation(int angle);
     void setYRotation(int angle);
     void setZRotation(int angle);
     void cleanup();
 
-signals:
+    void drawPoint(double x, double y, double z);
+    void drawLine(double x1, double y1, double z1,
+                  double x2, double y2, double z2);
+
+Q_SIGNALS:
     void xRotationChanged(int angle);
     void yRotationChanged(int angle);
     void zRotationChanged(int angle);

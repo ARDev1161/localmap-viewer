@@ -4,6 +4,11 @@
 #include <QMainWindow>
 #include "mapglwidget.h"
 
+#include <QtDBus/QtDBus>
+#include "viewer_adaptor.h"
+
+#define SERVICE_NAME            "org.localmap.viewer"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE

@@ -1,0 +1,19 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+    "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+    <interface name="org.localmap.viewer.ViewerInterface">
+        <method name="drawPoint">
+            <arg name="x" direction="in" type="d"/>
+            <arg name="y" direction="in" type="d"/>
+            <arg name="z" direction="in" type="d"/>
+        </method>
+        <method name="drawLine">
+            <arg name="x1" direction="in" type="d"/>
+            <arg name="y1" direction="in" type="d"/>
+            <arg name="z1" direction="in" type="d"/>
+            <arg name="x2" direction="in" type="d"/>
+            <arg name="y2" direction="in" type="d"/>
+            <arg name="z2" direction="in" type="d"/>
+        </method>
+    </interface>
+</node>

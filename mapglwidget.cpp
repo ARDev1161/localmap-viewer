@@ -192,11 +192,26 @@ void MapGLWidget::cleanup()
     doneCurrent();
 }
 
+void MapGLWidget::drawPoint(double x, double y, double z){
+    QVector<QVector3D> points;
+    points.push_back(QVector3D(x, y, z));
+    draw(GL_POINTS, points);
+}
+
+void MapGLWidget::drawLine(double x1, double y1, double z1,
+                           double x2, double y2, double z2)
+{
+    QVector<QVector3D> lines;
+    lines.push_back(QVector3D(x1, y1, z1));
+    lines.push_back(QVector3D(x2, y2, z2));
+    draw(GL_LINES, lines);
+}
+
 int MapGLWidget::draw(GLenum mode, QVector<QVector3D> &data)
 {
     drawMode = mode;
 
-    for(int i = 0; i <= data.size()-6; i++){
+    for(int i = 0; i < data.size(); i++){
 //        QVector3D n = QVector3D::normal(QVector3D(x3 - x1, y3 - y1, 0.0f), QVector3D(x2 - x1, y2 - y1, 0.0f));
         add(mode, data.at(i), QVector3D(0, 0, -0.05f));
     }
@@ -244,15 +259,11 @@ void MapGLWidget::initializeGL()
     normalMatrixLoc = shaderProgram->uniformLocation("normalMatrix");
     lightPosLoc = shaderProgram->uniformLocation("lightPos");
 
-    points.vao.create();
-    QOpenGLVertexArrayObject::Binder pointsVaoBinder(&(points.vao));
-    points.initVbo();
-    setupVertexAttribs(points.vbo);
+//    points.init();
+//    setupVertexAttribs(points.vbo);
 
-    lines.vao.create();
-    QOpenGLVertexArrayObject::Binder linesVaoBinder(&(lines.vao));
-    lines.initVbo();
-    setupVertexAttribs(lines.vbo);
+//    lines.init();
+//    setupVertexAttribs(lines.vbo);
 
     // Our camera never changes in this example.
     camera.setToIdentity();
@@ -279,6 +290,12 @@ void MapGLWidget::setupVertexAttribs(QOpenGLBuffer &vbo)
 
 void MapGLWidget::paintGL()
 {
+    points.init();
+    setupVertexAttribs(points.vbo);
+
+    lines.init();
+    setupVertexAttribs(lines.vbo);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST); // Enabling depth test for added fragments
     glEnable(GL_CULL_FACE); // Don't drawing invisible fragments
@@ -294,10 +311,10 @@ void MapGLWidget::paintGL()
     QMatrix3x3 normalMatrix = world.normalMatrix();
     shaderProgram->setUniformValue(normalMatrixLoc, normalMatrix);
 
-    QOpenGLVertexArrayObject::Binder pointsVaoBinder(&(points.vao));
+    points.vaoBinder->rebind();
     glDrawArrays(GL_POINTS, 0, points.vertexCount());
 
-    QOpenGLVertexArrayObject::Binder linesVaoBinder(&(lines.vao));
+    lines.vaoBinder->rebind();
     glDrawArrays(GL_LINES, 0, lines.vertexCount());
 
     shaderProgram->release();

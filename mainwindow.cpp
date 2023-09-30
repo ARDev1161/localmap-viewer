@@ -27,28 +27,26 @@ MainWindow::MainWindow(QWidget *parent)
 //    setLayout(mainLayout);
     setWindowTitle(tr("Map viewer"));
 
-    const int NumSectors = 10;
+    const int NumSectors = 100;
 
     QVector<QVector3D> points;
     QVector<QVector3D> lines;
-
-    lines.push_back(QVector3D(0.30f, 0.30f, -0.05f));
-    lines.push_back(QVector3D(0.05f, 0.05f, -0.05f));
-    lines.push_back(QVector3D(0.55f, 0.55f, -0.05f));
-
-    lines.push_back(QVector3D(0.40f, 0.40f, -0.05f));
-    lines.push_back(QVector3D(0.15f, 0.15f, -0.05f));
-    lines.push_back(QVector3D(0.65f, 0.65f, -0.05f));
 
     for (int i = 0; i < NumSectors; ++i) {
         GLfloat angle = (i * 2 * M_PI) / NumSectors;
         GLfloat angleSin = qSin(angle);
         GLfloat angleCos = qCos(angle);
-        points.push_back(QVector3D(0.30f * angleSin, 0.30f * angleCos, -0.05f));
+        points.push_back(QVector3D(0.29f * angleSin, 0.29f * angleCos, -0.05f));
+        lines.push_back(QVector3D(0.30f * angleSin, 0.30f * angleCos, -0.05f));
     }
 
-    mapWidget->draw(GL_POINTS, lines);
-    mapWidget->draw(GL_LINES, points);
+    mapWidget->draw(GL_POINTS, points);
+    mapWidget->draw(GL_LINES, lines);
+
+    new ViewerInterfaceAdaptor(mapWidget);
+    QDBusConnection connection = QDBusConnection::sessionBus();
+    connection.registerObject("/Viewer", mapWidget);
+    connection.registerService(SERVICE_NAME);
 }
 
 MainWindow::~MainWindow()
@@ -81,5 +79,21 @@ void MainWindow::on_action_Quit_triggered()
 
 void MainWindow::on_action_About_triggered()
 {
-    // TODO
+//    // TODO
+//    QVector<QVector3D> lines;
+
+//    lines.push_back(QVector3D(0.04f, 0.04f, -0.05f));
+//    lines.push_back(QVector3D(0.06f, 0.04f, -0.05f));
+
+//    lines.push_back(QVector3D(0.06f, 0.06f, -0.05f));
+//    lines.push_back(QVector3D(0.06f, 0.04f, -0.05f));
+
+//    lines.push_back(QVector3D(0.06f, 0.06f, -0.05f));
+//    lines.push_back(QVector3D(0.04f, 0.06f, -0.05f));
+
+//    lines.push_back(QVector3D(0.04f, 0.04f, -0.05f));
+//    lines.push_back(QVector3D(0.04f, 0.06f, -0.05f));
+
+//    mapWidget->draw(GL_LINES, lines);
+    mapWidget->cleanup();
 }
